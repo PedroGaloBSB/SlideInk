@@ -1,0 +1,23 @@
+{
+  "name": "slideink-overlay-poc",
+  "version": "0.1.0",
+  "description": "POC 1 - Overlay: Provar que é possível desenhar uma camada transparente sobre a apresentação",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron ."
+  },
+  "keywords": [
+    "slideink",
+    "overlay",
+    "poc"
+  ],
+  "author": "SlideInk Team",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0"
+  },
+  "dependencies": {
+    "pdfjs-dist": "^4.0.0"
+  }
+}
