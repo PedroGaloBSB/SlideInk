@@ -1,0 +1,454 @@
+/**
+ * SlideInk Design System - Componentes Base
+ * 
+ * Componentes CSS reutilizáveis seguindo os design tokens.
+ * Foco em: botões, indicadores de status, toolbar, cards discretos.
+ */
+
+/* ===========================================
+   BUTTONS - Variações completas
+   =========================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  height: var(--button-height-md);
+  padding: 0 var(--button-padding-x);
+  font-family: var(--font-family-base);
+  font-size: var(--button-font-size);
+  font-weight: var(--button-font-weight);
+  border-radius: var(--button-border-radius);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-colors), var(--transition-box-shadow);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.btn:disabled {
+  opacity: var(--opacity-50);
+  cursor: not-allowed;
+}
+
+/* Button sizes */
+.btn-sm {
+  height: var(--button-height-sm);
+  font-size: var(--font-size-sm);
+  padding: 0 var(--spacing-3);
+}
+
+.btn-lg {
+  height: var(--button-height-lg);
+  font-size: var(--font-size-md);
+  padding: 0 var(--spacing-6);
+}
+
+/* Button variants */
+.btn-primary {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-color);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--button-primary-hover-bg);
+}
+
+.btn-primary:active:not(:disabled) {
+  background-color: var(--button-primary-active-bg);
+}
+
+.btn-secondary {
+  background-color: var(--button-secondary-bg);
+  color: var(--button-secondary-color);
+  border: var(--button-secondary-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--button-secondary-hover-bg);
+  border-color: var(--button-secondary-hover-border);
+}
+
+.btn-danger {
+  background-color: var(--button-danger-bg);
+  color: var(--button-danger-color);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--button-danger-hover-bg);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-neutral-700);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--color-neutral-100);
+}
+
+/* Button with icon */
+.btn-icon {
+  padding: 0 var(--spacing-2);
+  min-width: var(--button-height-md);
+}
+
+.btn-icon .icon {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+}
+
+/* ===========================================
+   STATUS INDICATOR - Ponto de conexão
+   =========================================== */
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-700);
+}
+
+.status-dot {
+  display: inline-block;
+  width: var(--status-dot-size);
+  height: var(--status-dot-size);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.status-dot.sm {
+  width: var(--status-dot-size-sm);
+  height: var(--status-dot-size-sm);
+}
+
+.status-dot.lg {
+  width: var(--status-dot-size-lg);
+  height: var(--status-dot-size-lg);
+}
+
+/* Status colors */
+.status-dot.connected,
+.status-dot.success {
+  background-color: var(--color-success);
+}
+
+.status-dot.disconnected,
+.status-dot.error {
+  background-color: var(--color-error);
+}
+
+.status-dot.warning,
+.status-dot.instable {
+  background-color: var(--color-warning);
+}
+
+.status-dot.info {
+  background-color: var(--color-info);
+}
+
+/* Status text colors */
+.status-text.connected,
+.status-text.success {
+  color: var(--color-success);
+}
+
+.status-text.disconnected,
+.status-text.error {
+  color: var(--color-error);
+}
+
+.status-text.warning,
+.status-text.instable {
+  color: #B78900; /* Warning escuro para contraste */
+}
+
+.status-text.info {
+  color: var(--color-info);
+}
+
+/* ===========================================
+   TOOLBAR - Container principal
+   =========================================== */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  height: var(--toolbar-height);
+  padding: 0 var(--spacing-6);
+  background-color: var(--toolbar-bg);
+  border-bottom: var(--toolbar-border-bottom);
+  box-shadow: var(--shadow-toolbar);
+  flex-shrink: 0;
+}
+
+.toolbar-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-800);
+  letter-spacing: var(--letter-spacing-tight);
+  margin-right: var(--spacing-4);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 24px;
+  background-color: var(--color-neutral-200);
+  margin: 0 var(--spacing-2);
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+/* ===========================================
+   STATUS BAR - Barra inferior
+   =========================================== */
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--status-bar-height);
+  padding: 0 var(--spacing-4);
+  background-color: var(--status-bar-bg);
+  border-top: var(--status-bar-border-top);
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-600);
+  flex-shrink: 0;
+}
+
+.status-bar-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+/* ===========================================
+   PDF CONTAINER - Área de visualização
+   =========================================== */
+
+.pdf-container {
+  position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--pdf-container-bg);
+  overflow: auto;
+  padding: var(--spacing-6);
+}
+
+.pdf-canvas {
+  box-shadow: var(--shadow-lg);
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Overlay canvas para anotações */
+.overlay-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  opacity: var(--overlay-opacity-active);
+  transition: opacity var(--transition-base);
+}
+
+.overlay-canvas.idle {
+  opacity: var(--overlay-opacity-idle);
+}
+
+/* ===========================================
+   CARD - Containers discretos
+   =========================================== */
+
+.card {
+  background-color: var(--color-neutral-0);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-4);
+}
+
+.card-header {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-800);
+  margin-bottom: var(--spacing-2);
+}
+
+.card-body {
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-600);
+  line-height: var(--line-height-base);
+}
+
+/* Card flutuante (para painéis de teste/info) */
+.card-floating {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-4);
+  z-index: var(--z-index-popover);
+  max-width: 320px;
+}
+
+.card-floating.header {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-800);
+  margin-bottom: var(--spacing-3);
+}
+
+/* ===========================================
+   BADGE - Indicadores pequenos
+   =========================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-1) var(--spacing-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-full);
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-700);
+}
+
+.badge-primary {
+  background-color: var(--color-primary-50);
+  color: var(--color-primary-700);
+}
+
+.badge-success {
+  background-color: var(--color-success-light);
+  color: var(--color-success);
+}
+
+.badge-warning {
+  background-color: var(--color-warning-light);
+  color: #B78900;
+}
+
+.badge-error {
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+}
+
+/* ===========================================
+   PAGE NAVIGATION - Controles de página
+   =========================================== */
+
+.page-navigation {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-600);
+}
+
+.page-current {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-800);
+  min-width: 48px;
+  text-align: center;
+}
+
+.page-separator {
+  color: var(--color-neutral-400);
+}
+
+/* ===========================================
+   ICON - Sistema de ícones
+   =========================================== */
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-sm {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+.icon-md {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+}
+
+.icon-lg {
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+}
+
+.icon-xl {
+  width: var(--icon-size-xl);
+  height: var(--icon-size-xl);
+}
+
+/* ===========================================
+   UTILITY CLASSES - Estados e comportamentos
+   =========================================== */
+
+/* Hover states */
+.hover-lift {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.hover-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Fade animations */
+.fade-in {
+  animation: fadeIn var(--transition-base);
+}
+
+.fade-out {
+  animation: fadeOut var(--transition-base);
+}
+
+.slide-up {
+  animation: slideUp var(--transition-base);
+}
+
+/* Truncate text */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

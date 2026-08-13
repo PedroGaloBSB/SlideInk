@@ -1,0 +1,321 @@
+/**
+ * SlideInk Design System - Core Tokens
+ * 
+ * Princípios:
+ * - Invisibilidade Ativa: A interface desaparece durante a aula
+ * - Foco no Conteúdo: O slide é o protagonista
+ * - Profissionalismo: Confiança, estabilidade, baixa distração
+ * - Minimalismo Funcional: Apenas o necessário, quando necessário
+ * 
+ * Inspirado em: Apple + Linear + Notion (sem copiar)
+ * Evitar: Gradientes excessivos, glassmorphism, cards desnecessários
+ */
+
+:root {
+  /* ===========================================
+     CORE COLORS - Paleta neutra e profissional
+     =========================================== */
+  
+  /* Neutros - Base da interface */
+  --color-neutral-0: #FFFFFF;      /* Branco puro - fundos claros */
+  --color-neutral-50: #F8F9FA;     /* Cinza muito claro - superfícies */
+  --color-neutral-100: #F1F3F4;    /* Cinza claro - divisórias sutis */
+  --color-neutral-200: #E8EAED;    /* Cinza médio-claro - bordas */
+  --color-neutral-300: #DADCE0;    /* Cinza médio - elementos discretos */
+  --color-neutral-400: #BDC1C6;    /* Cinza médio-escuro - ícones secundários */
+  --color-neutral-500: #9AA0A6;    /* Cinza - texto secundário */
+  --color-neutral-600: #5F6368;    /* Cinza escuro - texto terciário */
+  --color-neutral-700: #3C4043;    /* Cinza muito escuro - texto primário */
+  --color-neutral-800: #202124;    /* Quase preto - títulos */
+  --color-neutral-900: #1A1A1A;    /* Preto suave - texto forte */
+  --color-neutral-1000: #000000;   /* Preto puro - contrastes */
+
+  /* Cor de destaque única - SlideInk Blue */
+  /* Usada apenas para: ações principais, estado ativo, foco */
+  --color-primary-50: #E8F4FD;
+  --color-primary-100: #C5E3FA;
+  --color-primary-200: #9ED0F6;
+  --color-primary-300: #77BDF2;
+  --color-primary-400: #5BAEF0;
+  --color-primary-500: #3F9FED;    /* Cor principal */
+  --color-primary-600: #368BD6;
+  --color-primary-700: #2D77BF;
+  --color-primary-800: #2463A8;
+  --color-primary-900: #1B4F91;
+
+  /* Cores de estado - Semânticas e acessíveis */
+  --color-success: #34A853;        /* Conectado, sucesso */
+  --color-success-light: #E6F4E9;
+  --color-warning: #FBBC04;        /* Atenção, instável */
+  --color-warning-light: #FEF7E0;
+  --color-error: #EA4335;          /* Erro, desconectado */
+  --color-error-light: #FCE8E6;
+  --color-info: #4285F4;           /* Informação */
+  --color-info-light: #E8F0FE;
+
+  /* ===========================================
+     TYPOGRAPHY - Limpa, legível, profissional
+     =========================================== */
+  
+  /* Font family - System fonts para performance e natividade */
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-family-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', 'Droid Sans Mono', 'Source Code Pro', monospace;
+
+  /* Font sizes - Escala modular */
+  --font-size-xs: 11px;            /* Metadados, labels mínimos */
+  --font-size-sm: 12px;            /* Texto secundário, status */
+  --font-size-base: 14px;          /* Texto corporal padrão */
+  --font-size-md: 16px;            /* Texto importante */
+  --font-size-lg: 18px;            /* Títulos pequenos */
+  --font-size-xl: 20px;            /* Títulos de seção */
+  --font-size-2xl: 24px;           /* Títulos principais */
+  --font-size-3xl: 30px;           /* Headings grandes */
+
+  /* Font weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line heights */
+  --line-height-tight: 1.25;
+  --line-height-base: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Letter spacing */
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-base: 0;
+  --letter-spacing-wide: 0.02em;
+
+  /* ===========================================
+     SPACING - Sistema de 4px
+     =========================================== */
+  
+  --spacing-0: 0;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+
+  /* ===========================================
+     BORDER RADIUS - Conservador e profissional
+     =========================================== */
+  
+  --radius-none: 0;
+  --radius-sm: 4px;                /* Botões pequenos, inputs */
+  --radius-md: 6px;                /* Botões padrão, cards */
+  --radius-lg: 8px;                /* Containers maiores */
+  --radius-xl: 12px;               /* Modais, painéis */
+  --radius-2xl: 16px;              /* Elementos destacados */
+  --radius-full: 9999px;           /* Badges, indicadores */
+
+  /* ===========================================
+     SHADOWS - Extremamente sutis
+     =========================================== */
+  
+  /* Sombras claras para não competir com o conteúdo */
+  --shadow-none: none;
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* Sombra específica para toolbar - discreta */
+  --shadow-toolbar: 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+
+  /* ===========================================
+     TRANSITIONS - Rápidas e imperceptíveis
+     =========================================== */
+  
+  --transition-fast: 100ms ease;
+  --transition-base: 150ms ease;
+  --transition-slow: 200ms ease;
+  
+  --transition-colors: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+  --transition-opacity: opacity var(--transition-fast);
+  --transition-transform: transform var(--transition-base);
+  --transition-box-shadow: box-shadow var(--transition-base);
+
+  /* ===========================================
+     OPACITY - Para estados e camadas
+     =========================================== */
+  
+  --opacity-0: 0;
+  --opacity-25: 0.25;
+  --opacity-50: 0.5;
+  --opacity-75: 0.75;
+  --opacity-100: 1;
+
+  /* ===========================================
+     Z-INDEX - Hierarquia clara
+     =========================================== */
+  
+  --z-index-base: 0;
+  --z-index-dropdown: 10;
+  --z-index-sticky: 20;
+  --z-index-fixed: 30;
+  --z-index-modal-backdrop: 40;
+  --z-index-modal: 50;
+  --z-index-popover: 60;
+  --z-index-tooltip: 70;
+  --z-index-overlay: 100;        /* Camada de anotação */
+
+  /* ===========================================
+     ICONS - Tamanho padrão
+     =========================================== */
+  
+  --icon-size-xs: 12px;
+  --icon-size-sm: 16px;
+  --icon-size-md: 20px;          /* Tamanho padrão */
+  --icon-size-lg: 24px;
+  --icon-size-xl: 32px;
+
+  /* ===========================================
+     LAYOUT - PDF Viewer específico
+     =========================================== */
+  
+  /* Toolbar */
+  --toolbar-height: 56px;
+  --toolbar-bg: var(--color-neutral-0);
+  --toolbar-border-bottom: 1px solid var(--color-neutral-200);
+  
+  /* Status bar */
+  --status-bar-height: 32px;
+  --status-bar-bg: var(--color-neutral-50);
+  --status-bar-border-top: 1px solid var(--color-neutral-200);
+  
+  /* PDF container */
+  --pdf-container-bg: var(--color-neutral-200);
+  
+  /* Overlay canvas */
+  --overlay-opacity-idle: 0;      /* Invisível quando ocioso */
+  --overlay-opacity-active: 1;    /* Visível durante anotação */
+
+  /* ===========================================
+     BUTTONS - Estilos base
+     =========================================== */
+  
+  /* Button base */
+  --button-height-sm: 32px;
+  --button-height-md: 40px;
+  --button-height-lg: 48px;
+  
+  --button-font-size: var(--font-size-base);
+  --button-font-weight: var(--font-weight-medium);
+  --button-border-radius: var(--radius-md);
+  
+  /* Button variants */
+  --button-primary-bg: var(--color-primary-500);
+  --button-primary-color: var(--color-neutral-0);
+  --button-primary-hover-bg: var(--color-primary-600);
+  --button-primary-active-bg: var(--color-primary-700);
+  
+  --button-secondary-bg: var(--color-neutral-0);
+  --button-secondary-color: var(--color-neutral-700);
+  --button-secondary-border: 1px solid var(--color-neutral-300);
+  --button-secondary-hover-bg: var(--color-neutral-50);
+  --button-secondary-hover-border: var(--color-neutral-400);
+  
+  --button-danger-bg: var(--color-error);
+  --button-danger-color: var(--color-neutral-0);
+  --button-danger-hover-bg: #D93025;
+  
+  /* Button padding */
+  --button-padding-x: var(--spacing-4);
+  --button-padding-y: var(--spacing-2);
+
+  /* ===========================================
+     STATUS INDICATORS
+     =========================================== */
+  
+  --status-dot-size: 8px;
+  --status-dot-size-sm: 6px;
+  --status-dot-size-lg: 10px;
+
+  /* ===========================================
+     ANIMAÇÕES - Mínimas e funcionais
+     =========================================== */
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(4px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  --animation-fade-in: fadeIn var(--transition-base);
+  --animation-fade-out: fadeOut var(--transition-base);
+  --animation-slide-up: slideUp var(--transition-base);
+
+  /* ===========================================
+     FOCUS STATES - Acessibilidade
+     =========================================== */
+  
+  --focus-ring: 0 0 0 2px var(--color-neutral-0), 0 0 0 4px var(--color-primary-500);
+  --focus-ring-error: 0 0 0 2px var(--color-neutral-0), 0 0 0 4px var(--color-error);
+}
+
+/* ===========================================
+   UTILITY CLASSES - Para uso consistente
+   =========================================== */
+
+/* Typography utilities */
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-md { font-size: var(--font-size-md); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+
+.font-normal { font-weight: var(--font-weight-normal); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+.text-primary { color: var(--color-primary-500); }
+.text-success { color: var(--color-success); }
+.text-warning { color: var(--color-warning); }
+.text-error { color: var(--color-error); }
+.text-neutral { color: var(--color-neutral-500); }
+
+/* Spacing utilities */
+.m-0 { margin: 0; }
+.m-1 { margin: var(--spacing-1); }
+.m-2 { margin: var(--spacing-2); }
+.m-4 { margin: var(--spacing-4); }
+.p-0 { padding: 0; }
+.p-1 { padding: var(--spacing-1); }
+.p-2 { padding: var(--spacing-2); }
+.p-4 { padding: var(--spacing-4); }
+
+/* Flex utilities */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.gap-2 { gap: var(--spacing-2); }
+.gap-4 { gap: var(--spacing-4); }
+
+/* Visibility */
+.hidden { display: none; }
+.invisible { visibility: hidden; }
+.visible { visibility: visible; }
+
+/* Opacity transitions */
+.opacity-transition { transition: opacity var(--transition-base); }
