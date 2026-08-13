@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SlideInk - POC Overlay</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .toolbar {
+      background: #2c3e50;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .toolbar h1 {
+      font-size: 18px;
+      margin-right: 20px;
+    }
+
+    .toolbar button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .toolbar button:hover {
+      background: #2980b9;
+    }
+
+    .toolbar button.danger {
+      background: #e74c3c;
+    }
+
+    .toolbar button.danger:hover {
+      background: #c0392b;
+    }
+
+    .pdf-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #525659;
+      overflow: auto;
+      position: relative;
+    }
+
+    #pdf-render {
+      max-width: 90%;
+      max-height: 90%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    .status-bar {
+      background: #34495e;
+      color: white;
+      padding: 8px 20px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+
+    .status-connected {
+      background: #2ecc71;
+    }
+
+    .status-disconnected {
+      background: #e74c3c;
+    }
+
+    .test-controls {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(255,255,255,0.95);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .test-controls h3 {
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    .test-controls button {
+      display: block;
+      width: 100%;
+      margin-bottom: 8px;
+      background: #9b59b6;
+      color: white;
+      border: none;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .test-controls button:hover {
+      background: #8e44ad;
+    }
+
+    .info-panel {
+      position: absolute;
+      bottom: 50px;
+      left: 20px;
+      background: rgba(255,255,255,0.95);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      max-width: 300px;
+    }
+
+    .info-panel h3 {
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #2c3e50;
+    }
+
+    .info-panel p {
+      font-size: 12px;
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="toolbar">
+      <h1>📝 SlideInk - POC Overlay</h1>
+      <button id="btn-prev">← Anterior</button>
+      <button id="btn-next">Próximo →</button>
+      <button id="btn-clear" class="danger">✕ Limpar Anotações</button>
+      <span style="margin-left: auto;">Página <span id="page-num">--</span> de <span id="page-total">--</span></span>
+    </div>
+
+    <div class="pdf-container">
+      <canvas id="pdf-render"></canvas>
+      
+      <div class="test-controls">
+        <h3>🧪 Testes do Overlay</h3>
+        <button id="btn-draw-line">Desenhar Linha</button>
+        <button id="btn-draw-circle">Desenhar Círculo</button>
+        <button id="btn-draw-text">Escrever Texto</button>
+        <button id="btn-draw-free">Modo Desenho Livre</button>
+      </div>
+
+      <div class="info-panel">
+        <h3>ℹ️ Objetivo da POC</h3>
+        <p>Provar que é possível criar uma camada transparente sobre o PDF que seja capturada pelo Zoom/Meet/Teams durante o compartilhamento de tela.</p>
+        <p style="margin-top: 8px;"><strong>Status:</strong> <span id="poc-status">Em teste</span></p>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <span><span class="status-indicator status-disconnected" id="connection-status"></span><span id="connection-text">Desconectado do Android</span></span>
+      <span>Overlay: <span id="overlay-status">Ativo</span></span>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    let pdfDoc = null;
+    let pageNum = 1;
+    let pageRendering = false;
+    let pageNumPending = null;
+    const scale = 1.5;
+    const canvas = document.getElementById('pdf-render');
+    const ctx = canvas.getContext('2d');
+
+    // Canvas do overlay (será usado para desenhar anotações)
+    let overlayCanvas = null;
+    let overlayCtx = null;
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    function createOverlayCanvas() {
+      overlayCanvas = document.createElement('canvas');
+      overlayCanvas.style.position = 'absolute';
+      overlayCanvas.style.top = '0';
+      overlayCanvas.style.left = '0';
+      overlayCanvas.style.pointerEvents = 'none';
+      overlayCanvas.id = 'overlay-canvas';
+      
+      const container = document.querySelector('.pdf-container');
+      container.appendChild(overlayCanvas);
+      
+      overlayCtx = overlayCanvas.getContext('2d');
+      resizeOverlay();
+    }
+
+    function resizeOverlay() {
+      if (overlayCanvas && canvas) {
+        overlayCanvas.width = canvas.width;
+        overlayCanvas.height = canvas.height;
+        overlayCanvas.style.top = canvas.offsetTop + 'px';
+        overlayCanvas.style.left = canvas.offsetLeft + 'px';
+      }
+    }
+
+    function renderPage(num) {
+      pageRendering = true;
+      
+      pdfDoc.getPage(num).then(function(page) {
+        const viewport = page.getViewport({scale: scale});
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        const renderContext = {
+          canvasContext: ctx,
+          viewport: viewport
+        };
+        
+        const renderTask = page.render(renderContext);
+
+        renderTask.promise.then(function() {
+          pageRendering = false;
+          
+          document.getElementById('page-num').textContent = num;
+          document.getElementById('page-total').textContent = pdfDoc.numPages;
+          
+          resizeOverlay();
+          
+          if (pageNumPending !== null) {
+            renderPage(pageNumPending);
+            pageNumPending = null;
+          }
+        });
+      });
+    }
+
+    function queueRenderPage(num) {
+      if (pageRendering) {
+        pageNumPending = num;
+      } else {
+        renderPage(num);
+      }
+    }
+
+    function onPrevPage() {
+      if (pageNum <= 1) return;
+      pageNum--;
+      queueRenderPage(pageNum);
+    }
+
+    function onNextPage() {
+      if (pageNum >= pdfDoc.numPages) return;
+      pageNum++;
+      queueRenderPage(pageNum);
+    }
+
+    // Carregar PDF de exemplo
+    async function loadPDF() {
+      try {
+        // PDF de exemplo (usando um URL público para testes)
+        const url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-plastic-09.pdf';
+        
+        const loadingTask = pdfjsLib.getDocument(url);
+        pdfDoc = await loadingTask.promise;
+        
+        document.getElementById('page-total').textContent = pdfDoc.numPages;
+        renderPage(pageNum);
+        
+        console.log('PDF carregado com sucesso:', pdfDoc.numPages, 'páginas');
+      } catch (error) {
+        console.error('Erro ao carregar PDF:', error);
+        document.getElementById('poc-status').textContent = 'Erro ao carregar PDF';
+        document.getElementById('poc-status').style.color = '#e74c3c';
+      }
+    }
+
+    // Funções de desenho no overlay
+    function drawLine() {
+      if (!overlayCtx) return;
+      
+      overlayCtx.strokeStyle = '#e74c3c';
+      overlayCtx.lineWidth = 3;
+      overlayCtx.beginPath();
+      overlayCtx.moveTo(50, 50);
+      overlayCtx.lineTo(200, 200);
+      overlayCtx.stroke();
+      
+      console.log('Linha desenhada no overlay');
+    }
+
+    function drawCircle() {
+      if (!overlayCtx) return;
+      
+      overlayCtx.strokeStyle = '#3498db';
+      overlayCtx.lineWidth = 3;
+      overlayCtx.beginPath();
+      overlayCtx.arc(300, 150, 50, 0, 2 * Math.PI);
+      overlayCtx.stroke();
+      
+      console.log('Círculo desenhado no overlay');
+    }
+
+    function drawText() {
+      if (!overlayCtx) return;
+      
+      overlayCtx.fillStyle = '#2ecc71';
+      overlayCtx.font = 'bold 24px Arial';
+      overlayCtx.fillText('Teste de Overlay ✓', 100, 300);
+      
+      console.log('Texto desenhado no overlay');
+    }
+
+    function enableFreeDraw() {
+      if (!overlayCanvas) return;
+      
+      overlayCanvas.style.pointerEvents = 'auto';
+      
+      overlayCanvas.addEventListener('mousedown', startDrawing);
+      overlayCanvas.addEventListener('mousemove', draw);
+      overlayCanvas.addEventListener('mouseup', stopDrawing);
+      overlayCanvas.addEventListener('mouseout', stopDrawing);
+      
+      console.log('Modo desenho livre ativado');
+    }
+
+    function startDrawing(e) {
+      isDrawing = true;
+      const rect = overlayCanvas.getBoundingClientRect();
+      lastX = e.clientX - rect.left;
+      lastY = e.clientY - rect.top;
+    }
+
+    function draw(e) {
+      if (!isDrawing || !overlayCtx) return;
+      
+      const rect = overlayCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      overlayCtx.strokeStyle = '#9b59b6';
+      overlayCtx.lineWidth = 3;
+      overlayCtx.lineCap = 'round';
+      overlayCtx.beginPath();
+      overlayCtx.moveTo(lastX, lastY);
+      overlayCtx.lineTo(x, y);
+      overlayCtx.stroke();
+      
+      lastX = x;
+      lastY = y;
+    }
+
+    function stopDrawing() {
+      isDrawing = false;
+    }
+
+    function clearAnnotations() {
+      if (overlayCtx) {
+        overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+        console.log('Anotações limpas');
+      }
+    }
+
+    // Event listeners
+    document.getElementById('btn-prev').addEventListener('click', onPrevPage);
+    document.getElementById('btn-next').addEventListener('click', onNextPage);
+    document.getElementById('btn-clear').addEventListener('click', clearAnnotations);
+    
+    document.getElementById('btn-draw-line').addEventListener('click', drawLine);
+    document.getElementById('btn-draw-circle').addEventListener('click', drawCircle);
+    document.getElementById('btn-draw-text').addEventListener('click', drawText);
+    document.getElementById('btn-draw-free').addEventListener('click', enableFreeDraw);
+
+    // Simular conexão após 2 segundos
+    setTimeout(() => {
+      document.getElementById('connection-status').classList.remove('status-disconnected');
+      document.getElementById('connection-status').classList.add('status-connected');
+      document.getElementById('connection-text').textContent = 'Conectado ao Android (Simulação)';
+    }, 2000);
+
+    // Inicializar
+    createOverlayCanvas();
+    loadPDF();
+
+    // Listener para comandos IPC (quando integrado com Electron)
+    if (window.require) {
+      const { ipcRenderer } = require('electron');
+      
+      ipcRenderer.on('clear-annotations', () => {
+        clearAnnotations();
+      });
+      
+      ipcRenderer.on('add-stroke', (event, stroke) => {
+        // Implementar recebimento de strokes do Android
+        console.log('Stroke recebido do Android:', stroke);
+      });
+    }
+  </script>
+</body>
+</html>
