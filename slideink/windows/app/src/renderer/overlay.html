@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SlideInk - Overlay</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            overflow: hidden;
+            background: transparent;
+        }
+        
+        #overlay-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none; /* Click-through */
+        }
+        
+        #laser-dot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, rgba(255,0,0,0.8) 0%, rgba(255,0,0,0) 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            display: none;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="overlay-canvas"></canvas>
+    <div id="laser-dot"></div>
+    
+    <script>
+        const { ipcRenderer } = require('electron');
+        
+        const canvas = document.getElementById('overlay-canvas');
+        const ctx = canvas.getContext('2d');
+        const laserDot = document.getElementById('laser-dot');
+        
+        // Ajusta tamanho do canvas
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Armazena strokes atuais
+        let currentStrokes = new Map();
+        let currentStroke = null;
+        
+        // Escuta eventos do main process
+        ipcRenderer.on('stroke-update', (event, data) => {
+            handleStrokeUpdate(data);
+        });
+        
+        ipcRenderer.on('laser-update', (event, data) => {
+            handleLaserUpdate(data);
+        });
+        
+        ipcRenderer.on('clear-all', () => {
+            clearCanvas();
+        });
+        
+        ipcRenderer.on('undo-stroke', (event, data) => {
+            removeStroke(data.strokeId);
+        });
+        
+        function handleStrokeUpdate(data) {
+            const { type, payload } = data;
+            
+            if (type === 'stroke_start') {
+                currentStroke = {
+                    id: payload.strokeId,
+                    points: [],
+                    color: parseInt(payload.color),
+                    size: parseFloat(payload.size),
+                    tool: payload.tool
+                };
+                currentStrokes.set(payload.strokeId, currentStroke);
+            } else if (type === 'stroke_point' && currentStroke) {
+                const points = payload.points.split(';');
+                points.forEach(pointStr => {
+                    const [x, y, pressure] = pointStr.split(',').map(Number);
+                    currentStroke.points.push({ x, y, pressure });
+                });
+                renderStroke(currentStroke);
+            } else if (type === 'stroke_end') {
+                currentStroke = null;
+            }
+        }
+        
+        function handleLaserUpdate(data) {
+            const { type, payload } = data;
+            
+            if (type === 'laser_on' || type === 'laser_move') {
+                const x = parseFloat(payload.x);
+                const y = parseFloat(payload.y);
+                
+                laserDot.style.display = 'block';
+                laserDot.style.left = x + 'px';
+                laserDot.style.top = y + 'px';
+            } else if (type === 'laser_off') {
+                laserDot.style.display = 'none';
+            }
+        }
+        
+        function renderStroke(stroke) {
+            if (!stroke || stroke.points.length === 0) return;
+            
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            const color = stroke.color;
+            const r = (color >> 16) & 0xFF;
+            const g = (color >> 8) & 0xFF;
+            const b = color & 0xFF;
+            const a = ((color >> 24) & 0xFF) / 255;
+            
+            ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
+            ctx.lineWidth = stroke.size;
+            
+            if (stroke.tool === 'highlighter') {
+                ctx.globalAlpha = 0.4;
+                ctx.lineWidth = stroke.size * 1.5;
+            } else {
+                ctx.globalAlpha = 1.0;
+            }
+            
+            ctx.beginPath();
+            ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+            
+            for (let i = 1; i < stroke.points.length; i++) {
+                ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+            }
+            
+            ctx.stroke();
+            ctx.globalAlpha = 1.0;
+        }
+        
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            currentStrokes.clear();
+        }
+        
+        function removeStroke(strokeId) {
+            // Remove stroke da memória
+            currentStrokes.delete(strokeId);
+            
+            // Redesenha todos os strokes restantes
+            redrawAll();
+        }
+        
+        function redrawAll() {
+            clearCanvas();
+            currentStrokes.forEach(stroke => {
+                renderStroke(stroke);
+            });
+        }
+        
+        // Renderiza stroke inicial
+        function renderInitialStroke(strokeData) {
+            const stroke = {
+                id: strokeData.id,
+                points: strokeData.points || [],
+                color: strokeData.color,
+                size: strokeData.size,
+                tool: strokeData.tool
+            };
+            currentStrokes.set(stroke.id, stroke);
+            renderStroke(stroke);
+        }
+        
+        console.log('[Overlay] Canvas inicializado');
+    </script>
+</body>
+</html>
